@@ -1,0 +1,7 @@
+node_modules/
+dist/
+dist-standalone/
+work/
+outputs/
+*.tsbuildinfo
+삼각형_예술을_그리다.html

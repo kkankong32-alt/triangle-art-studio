@@ -1,0 +1,10 @@
+import { X,BarChart3 } from 'lucide-react';
+import type { Filter,Triangle } from '../lib/model';
+import { statistics } from '../lib/statistics';
+import { useMemo } from 'react';
+import { trackEvent } from '../lib/analytics';
+export function Analysis({triangles,filter,setFilter,onClose}:{triangles:Triangle[];filter:Filter;setFilter:(f:Filter)=>void;onClose:()=>void}) {
+  const s=useMemo(()=>statistics(triangles),[triangles]);
+  function applyFilter(key:Exclude<Filter,null>) {const next=filter===key?null:key;setFilter(next);if(next)trackEvent('analysis_filter_used',{filter_type:next});}
+  return <aside className="analysis" aria-label="내 작품 분석"><div className="drawer-heading"><div><div className="eyebrow">03 / ANALYZE</div><h2>내 작품 분석</h2></div><button aria-label="분석 닫기" onClick={onClose}><X size={20}/></button></div><div className="total"><BarChart3 size={24}/><span>총 삼각형<strong>{s.total}<small>개</small></strong></span></div><p className="muted">항목을 누르면 작품에서 찾아볼 수 있어요.</p><h3>각의 크기에 따른 분류</h3>{([['acute','예각삼각형'],['right','직각삼각형'],['obtuse','둔각삼각형']] as const).map(([key,label])=><button className={`stat ${filter===key?'active':''}`} key={key} onClick={()=>applyFilter(key)} aria-pressed={filter===key}><span>{label}<b>{s[key]}<small>개 · {s.total?Math.round(s[key]/s.total*100):0}%</small></b></span><i><em style={{width:`${s.total?s[key]/s.total*100:0}%`}}/></i></button>)}<h3>도형의 성질</h3>{([['isIsosceles','이등변삼각형'],['isEquilateral','정삼각형'],['isScalene','세 변의 길이가 모두 다른 삼각형']] as const).map(([key,label])=><button className={`property-row ${filter===key?'active':''}`} key={key} aria-pressed={filter===key} onClick={()=>applyFilter(key)}><span>{label}</span><b>{s[key]}개</b></button>)}<p className="note">정삼각형은 이등변삼각형이기도 해요.</p><details><summary>사용한 색 · {Object.keys(s.colors).length}가지</summary><div className="color-counts">{Object.entries(s.colors).map(([color,count])=><span key={color}><i style={{background:color}}/>{color} · {count}개</span>)}</div></details>{s.acute>0&&s.right>0&&s.obtuse>0&&<p className="achievement">예각·직각·둔각삼각형을 모두 사용했어요.</p>}<button className="outline full" onClick={()=>setFilter(null)}>전체 보기</button></aside>;
+}

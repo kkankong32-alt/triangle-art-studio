@@ -1,0 +1,7 @@
+import {chromium} from '@playwright/test';
+import assert from 'node:assert/strict';
+const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chrome/Application/chrome.exe',headless:true});const page=await browser.newPage({viewport:{width:1024,height:768},hasTouch:true});await page.goto('http://localhost:5173');
+await page.getByRole('button',{name:'삼각형 추가',exact:true}).tap();await page.getByRole('button',{name:'여러 개 선택',exact:true}).tap();
+const bounds=await page.getByRole('button',{name:'삼각형 추가',exact:true}).boundingBox();assert.ok(bounds.y+bounds.height<=768);
+const triangles=Array.from({length:200},(_,i)=>({id:'stress-'+i,angleA:30+i%70,angleB:40,fill:'#258CA0',x:70+(i%20)*55,y:60+Math.floor(i/20)*70,rotation:i,scale:.25}));await page.locator('input[type=file]').setInputFiles({name:'stress.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify({version:1,mode:'free',triangles,settings:{snap:true}}))});await page.getByText('200개의 삼각형',{exact:true}).waitFor();
+const result=await page.evaluate(async()=>{const {default:K}=await import('/node_modules/.vite/deps/konva.js');const s=K.stages[0],layer=s.getLayers()[0],start=performance.now();for(let i=0;i<60;i++)layer.draw();return {nodes:s.find('Line').length,avgMs:(performance.now()-start)/60};});assert.equal(result.nodes,200);assert.ok(result.avgMs<50);console.log('PASS touch button input, fixed visible Add at tablet size, 200 objects draw:',result);await browser.close();
