@@ -5,3 +5,5 @@ work/
 outputs/
 *.tsbuildinfo
 삼각형_예술을_그리다.html
+# Separate project with its own git repo and GitHub Pages deploy — never part of this repo.
+triangle_quiz_pack/
