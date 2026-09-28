@@ -5,6 +5,7 @@ const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chr
 const page=await browser.newPage({viewport:{width:1440,height:900}});
 const errors=[];page.on('pageerror',e=>errors.push(e.message));
 await page.goto('http://localhost:5173');await page.waitForTimeout(400);
+await page.locator('.cover-start').click();await page.waitForTimeout(300); // dismiss the intro cover before exercising the editor
 await page.getByRole('button',{name:'교과서 활동',exact:true}).click();
 await page.getByText('빠른 예시').click();
 await page.getByRole('button',{name:'둔각 이등변',exact:true}).click();

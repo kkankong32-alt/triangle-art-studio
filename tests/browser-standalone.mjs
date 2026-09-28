@@ -15,6 +15,13 @@ const requests=[];page.on('request',r=>requests.push(r.url()));
 await page.goto(target);
 await page.getByText('삼각형, 예술을 그리다').first().waitFor();
 
+// The cover screen (image + invisible start hotspot) must render fully offline too, with its
+// image inlined as a data: URI — no separate file request even for the cover art.
+assert.equal(await page.locator('.cover').count(),1,'the intro cover should show on the standalone build too');
+assert.ok((await page.locator('.cover-frame img').getAttribute('src')).startsWith('data:'),'the standalone build must inline the cover image, not link to a local file');
+await page.locator('.cover-start').click();await page.waitForTimeout(300);
+assert.equal(await page.locator('.cover').count(),0,'the standalone build\'s start hotspot must work and dismiss the cover');
+
 // Angle slider still drives the live preview.
 await page.getByLabel('첫 번째 각 A').focus();
 for(let i=0;i<10;i++) await page.keyboard.press('ArrowLeft');

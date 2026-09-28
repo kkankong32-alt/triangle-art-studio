@@ -4,6 +4,7 @@ const browser=await chromium.launch({executablePath:'C:/Program Files (x86)/Micr
 const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
 const errors=[];page.on('pageerror',e=>errors.push(e.message));
 await page.goto('http://localhost:5173');await page.waitForTimeout(1000);
+await page.locator('.cover-start').click();await page.waitForTimeout(300); // dismiss the intro cover before exercising the editor
 await page.screenshot({path:'outputs/desktop-empty.png'});
 await page.getByRole('button',{name:'삼각형 추가',exact:true}).click();
 await page.getByRole('button',{name:'복제',exact:true}).click();
@@ -24,6 +25,8 @@ await page.getByText('세 개의 각, 무한한 상상').waitFor();await page.ge
 assert.equal(await page.getByText('2개의 삼각형',{exact:true}).count(),1);
 await page.setViewportSize({width:1024,height:768});await page.waitForTimeout(400);await page.screenshot({path:'outputs/tablet-editor.png'});
 await page.locator('input[type=file]').setInputFiles('work/qa-project.json');
-await page.waitForTimeout(900);await page.reload();await page.getByRole('dialog').getByRole('button',{name:'이어서 만들기'}).click();assert.equal(await page.getByText('2개의 삼각형',{exact:true}).count(),1);
+await page.waitForTimeout(900);await page.reload();await page.getByRole('dialog').getByRole('button',{name:'이어서 만들기'}).click();
+await page.locator('.cover-start').click();await page.waitForTimeout(300); // the cover reappears on every reload; dismiss it to reach the restored editor
+assert.equal(await page.getByText('2개의 삼각형',{exact:true}).count(),1);
 assert.deepEqual(errors,[]);console.log('PASS: desktop/tablet screenshots, create/duplicate/group/ungroup, PNG/JSON, clear/undo, load/autosave; no browser errors');
 await browser.close();

@@ -5,6 +5,7 @@ const browser=await chromium.launch({executablePath:'C:/Program Files/Google/Chr
 const page=await browser.newPage({viewport:{width:1440,height:900}});
 const errors=[];page.on('pageerror',e=>errors.push(e.message));
 await page.goto('http://localhost:5173');await page.waitForTimeout(400);
+await page.locator('.cover-start').click();await page.waitForTimeout(300); // dismiss the intro cover before exercising the editor
 
 const inspect=()=>page.evaluate(async()=>{const {default:K}=await import('/node_modules/.vite/deps/konva.js');return K.stages[0].find('Line').map(n=>({x:n.x(),y:n.y(),fill:n.fill()}));});
 async function dragTo(from,to){await page.mouse.move(from.x,from.y);await page.mouse.down();await page.mouse.move((from.x+to.x)/2,(from.y+to.y)/2,{steps:5});await page.mouse.move(to.x,to.y,{steps:10});await page.mouse.up();await page.waitForTimeout(150);}

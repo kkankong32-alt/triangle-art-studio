@@ -12,6 +12,7 @@ const errors=[];page.on('pageerror',e=>errors.push(e.message));
 const gaRequests=[];page.on('request',r=>{if(r.url().includes('googletagmanager.com'))gaRequests.push(r.url());});
 
 await page.goto('http://localhost:5173');await page.waitForTimeout(500);
+await page.locator('.cover-start').click();await page.waitForTimeout(300); // dismiss the intro cover before exercising the editor
 
 // Part 1: real environment (dev server on localhost) — analytics must stay fully inert.
 assert.equal(await page.evaluate(()=>document.querySelectorAll('script[src*="googletagmanager.com"]').length),0,'no gtag script tag on localhost');

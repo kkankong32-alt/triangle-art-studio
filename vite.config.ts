@@ -6,4 +6,4 @@ import react from '@vitejs/plugin-react';
 // Node's native fs.watch() has been observed to throw an unrelated "UNKNOWN: unknown error,
 // watch" on its own (likely from the drive's background sync touching a watched file).
 // usePolling avoids native watch handles entirely; ignored keeps build output out of the way.
-export default defineConfig({ plugins: [react()], base: './', server: { watch: { usePolling: true, interval: 400, ignored: ['**/dist/**', '**/dist-standalone/**'] } }, build: { rollupOptions: { output: { manualChunks: { canvas: ['konva','react-konva'] } } } } });
+export default defineConfig({ plugins: [react()], base: './', server: { watch: { usePolling: true, interval: 400, ignored: ['**/dist/**', '**/dist-standalone/**', '**/삼각형_예술을_그리다.html'] } }, build: { rollupOptions: { output: { manualChunks: { canvas: ['konva','react-konva'] } } } } });
