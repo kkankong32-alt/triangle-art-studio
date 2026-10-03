@@ -2,7 +2,6 @@
 // personal account and 킹수학's account) so they both receive the same anonymous, feature-
 // usage events. Every exported function is safe to call in any environment — dev, file://,
 // with an ad blocker, offline — and never throws or blocks the app.
-import { isHostedDeployment, type HostingEnv } from './hosting';
 export const GA_DESTINATIONS = ['G-DC7N6KQBG0', 'G-5YW0T2C109'] as const;
 
 declare global {
@@ -10,6 +9,15 @@ declare global {
     dataLayer?: unknown[];
     gtag?: (...args: unknown[]) => void;
   }
+}
+
+interface AnalyticsEnv { prod?: boolean; protocol?: string; hostname?: string }
+function currentEnv(): AnalyticsEnv {
+  return {
+    prod: import.meta.env.PROD,
+    protocol: typeof location === 'undefined' ? undefined : location.protocol,
+    hostname: typeof location === 'undefined' ? undefined : location.hostname,
+  };
 }
 
 // Test-only escape hatch (see tests/browser-analytics.mjs and analytics.test.ts): production
@@ -21,9 +29,12 @@ export function __setAnalyticsTestOverride(value: boolean | null): void { testOv
 // GA is only ever active for a real deployed site: a production build, served over http(s),
 // and not localhost/127.0.0.1/::1 — which also excludes file:// (protocol check) and the dev
 // server / npm run preview / the standalone HTML opened directly (all covered by one rule).
-export function isAnalyticsEnabled(env?: HostingEnv): boolean {
+export function isAnalyticsEnabled(env: AnalyticsEnv = currentEnv()): boolean {
   if (testOverride !== null) return testOverride;
-  return isHostedDeployment(env);
+  if (!env.prod) return false;
+  if (env.protocol !== 'http:' && env.protocol !== 'https:') return false;
+  if (env.hostname === 'localhost' || env.hostname === '127.0.0.1' || env.hostname === '::1') return false;
+  return true;
 }
 
 // Calling an unknown/throwing gtag must never break the app — this is the one place that

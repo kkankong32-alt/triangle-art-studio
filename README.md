@@ -25,8 +25,7 @@ npm run build:standalone
 
 ## 기능
 
-- 표지의 "시작하기"는 배포 사이트에서 입장 퀴즈([triangle-art-studio-quiz](https://kkankong32-alt.github.io/triangle-art-studio-quiz/))를 아직 통과하지 않았으면 퀴즈로, 통과했으면(`sessionStorage.triangle_art_quiz_passed`) 바로 편집기로 보냅니다. localhost·개발 서버·오프라인 standalone HTML에서는 퀴즈 게이트가 꺼져 곧장 편집기로 들어갑니다(`lib/quizGate.ts`). 편집기 하단에는 작은 제작자 크레딧이 표시되며 저장되는 PNG에는 들어가지 않습니다
-- 첫 진입 시 전체 화면 표지(인트로) — 이미지 속 "시작하기" 그래픽 위치에 투명 hotspot 버튼을 퍼센트 좌표로 겹쳐 반응형으로 정렬하며, 마우스·키보드(Enter/Space)·터치 모두로 진입할 수 있습니다. 새로고침하면 표지가 다시 나타나고, More 메뉴의 "표지로 돌아가기"로 작품을 지우지 않고 언제든 다시 볼 수 있습니다
+- 첫 진입 시 전체 화면 표지(인트로) — 이미지 속 "시작하기" 그래픽 위치에 투명 hotspot 버튼을 퍼센트 좌표로 겹쳐 반응형으로 정렬하며, 마우스·키보드(Enter/Space)·터치 모두로 진입할 수 있습니다. 편집기 하단에는 작은 제작자 크레딧이 표시되며 저장되는 PNG에는 들어가지 않습니다. 새로고침하면 표지가 다시 나타나고, More 메뉴의 "표지로 돌아가기"로 작품을 지우지 않고 언제든 다시 볼 수 있습니다
 - A/B 각도 조절, C 자동 계산, 정확한 실시간 미리보기, 다중 성질 분류
 - 미리보기 삼각형을 마우스·터치로 직접 눌러 아트보드의 원하는 위치에 놓기(끌어다 놓기), 기존 "삼각형 추가" 버튼도 동일하게 유지 — 두 방식 모두 같은 생성 로직을 사용하며 현재 각도·색상·분류가 그대로 적용됩니다
 - 자유 색상 팔레트 / 교과서 활동 자동 색상
@@ -67,8 +66,6 @@ src/
   assets/triangle-art-cover-main.webp 표지 원본 이미지(1672×941)
   canvas/Artboard.tsx        Konva 편집 및 Transformer
   lib/geometry.ts           순수 좌표 계산
-  lib/quizGate.ts            표지 → 퀴즈/편집기 분기
-  lib/hosting.ts             배포 사이트 여부 판단(analytics·퀴즈 게이트 공용)
   lib/coords.ts              화면 → 아트보드 좌표 변환(드래그 생성용)
   lib/analytics.ts           GA4 래퍼(배포 환경에서만 활성화, gtag 안전 호출)
   lib/classification.ts     각과 변의 다중 분류
@@ -93,7 +90,7 @@ Vite `base: './'`를 사용하여 저장소 하위 경로에서도 자산을 불
 
 ## 검증 및 제한
 
-49개 단위 테스트(`npm run test -- --run`): 명세의 분류 9종, 극단 각도 회귀 13종, 모든 유효한 정수 각 조합, 좌표에서 역산한 실제 각, 회전·균등 확대 불변성, 이력·복제·통계·파일 검증·스냅, 드래그 생성 좌표 변환(반응형으로 아트보드 크기가 달라져도 동일한 논리 좌표, 경계 밖은 null)과 드래그 생성물의 각도·색상·undo/redo, GA4 활성화 조건(개발/localhost/127.0.0.1/file:// 비활성화, 배포 환경 활성화)과 gtag 미존재 시 안전성을 검사합니다.
+44개 단위 테스트(`npm run test -- --run`): 명세의 분류 9종, 극단 각도 회귀 13종, 모든 유효한 정수 각 조합, 좌표에서 역산한 실제 각, 회전·균등 확대 불변성, 이력·복제·통계·파일 검증·스냅, 드래그 생성 좌표 변환(반응형으로 아트보드 크기가 달라져도 동일한 논리 좌표, 경계 밖은 null)과 드래그 생성물의 각도·색상·undo/redo, GA4 활성화 조건(개발/localhost/127.0.0.1/file:// 비활성화, 배포 환경 활성화)과 gtag 미존재 시 안전성을 검사합니다.
 
 `tests/browser-*.mjs`는 Windows의 Edge/Chrome 설치 경로와 localhost:5173 개발 서버를 사용하는 Playwright 스크립트입니다(실행 전 `work`, `outputs` 폴더를 만들고 `npm run dev`를 띄운 뒤 `node tests/<파일명>` 형태로 실행). 포함된 검사:
 
@@ -103,7 +100,7 @@ Vite `base: './'`를 사용하여 저장소 하위 경로에서도 자산을 불
 - `browser-drag-create.mjs` — 미리보기 드래그 생성이 정확한 드롭 위치·현재 각도/색상으로 생성되는지, 아트보드 밖 드롭은 취소되는지, 버튼 생성과 공존하는지, 화면 크기가 바뀌어도 좌표 변환이 맞는지, undo/redo, 분석 총계 반영
 - `browser-drag-textbook.mjs` — 교과서 활동 모드에서 드래그 생성물이 자동 분류 색을 사용하는지
 - `browser-cover.mjs` — 표지가 첫 로드에 보이고 편집기는 inert 상태인지, hotspot이 1440×900/1920×1080/태블릿에서 이미지 버튼과 퍼센트 단위로 정렬되는지, 마우스·키보드(Enter)·터치 모두로 진입되는지, "표지로 돌아가기"가 작품을 지우지 않는지, `intro_started`가 정확히 한 번 발생하는지
-- `browser-quiz-gate.mjs` — 게이트 꺼짐(개발)에서는 편집기로, 켜짐+미통과는 퀴즈로(Back 시 표지로 복귀), 켜짐+통과는 편집기로, 하단 크레딧 12px·아트보드 아래 위치, 저장 PNG에 크레딧 미포함
+- `browser-credit.mjs` — 시작하기가 항상 편집기로 바로 진입하는지, 편집기 하단 크레딧(12px, 아트보드 아래)이 보이는지, 저장 PNG에 크레딧이 들어가지 않는지
 - `browser-analytics.mjs` — localhost에서는 gtag 요청이 전혀 발생하지 않는지, 테스트 전용 override로 "배포 환경" 경로를 강제했을 때 gtag.js가 정확히 한 번 로드되고 두 GA4 속성이 설정되는지, `triangle_created`(버튼/드래그 구분, 슬라이더만으로는 미발생)·`mode_changed`(중복 클릭 시 미발생)·`analysis_opened`·`analysis_filter_used`·`artwork_exported`·`project_saved`·`project_loaded`·`help_opened`가 올바른 파라미터로 정확히 한 번씩 발생하는지, 어떤 이벤트에도 작품/좌표 데이터가 없는지를 실제 네트워크 요청 없이(`googletagmanager.com` 요청을 가로채 차단) 검사
 - `browser-standalone.mjs` — 단일 파일 빌드(`삼각형_예술을_그리다.html`)를 `file://`로 직접 열어 표지 이미지가 data: URI로 인라인되어 보이는지, 시작하기 hotspot이 동작하는지, 각도 조절/생성/드래그 생성/이동/복제/삭제/분석/PNG 저장/프로젝트 저장·불러오기가 네트워크 요청 없이 동작하는지, gtag 스크립트가 전혀 로드되지 않는지
 

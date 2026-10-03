@@ -13,7 +13,6 @@ import { parseProject,serializeProject,download } from './lib/projectFile';
 import { exportArtwork } from './lib/exportArtwork';
 import { getTriangleProperties } from './lib/classification';
 import { initializeAnalytics,trackEvent } from './lib/analytics';
-import { decideAfterCover,hasPassedQuiz,isQuizGateEnabled,QUIZ_URL } from './lib/quizGate';
 const BACKUP='triangle-art-studio-v1';
 function readBackup(){try {const raw=localStorage.getItem(BACKUP);const p=raw?parseProject(raw):null;return p?.triangles.length?p:null;}catch{return null;}}
 export default function App() {
@@ -28,8 +27,6 @@ export default function App() {
   useEffect(()=>{initializeAnalytics();},[]);
   function startFromCover() {
     trackEvent('intro_started',{source:'cover'});
-    // Not-yet-passed students on the real site go to the entry quiz (the cover stays as-is so Back returns to it).
-    if(decideAfterCover(isQuizGateEnabled(),hasPassedQuiz())==='quiz'){window.location.assign(QUIZ_URL);return;}
     setCover('closing');setTimeout(()=>setCover('hidden'),260);
   }
   function paste(items:Triangle[]) {const copies=duplicate(items);change(p=>({...p,triangles:[...p.triangles,...copies]}));setSelected(copies.map(t=>t.id));}
