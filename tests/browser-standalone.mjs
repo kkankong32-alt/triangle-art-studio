@@ -21,6 +21,7 @@ assert.equal(await page.locator('.cover').count(),1,'the intro cover should show
 assert.ok((await page.locator('.cover-frame img').getAttribute('src')).startsWith('data:'),'the standalone build must inline the cover image, not link to a local file');
 await page.locator('.cover-start').click();await page.waitForTimeout(300);
 assert.equal(await page.locator('.cover').count(),0,'the standalone build\'s start hotspot must work and dismiss the cover');
+assert.equal((await page.locator('footer .credit').textContent()).trim(),'기획·제작: 쓰로인훈쌤 김종훈','the footer credit must show in the standalone build too');
 
 // Angle slider still drives the live preview.
 await page.getByLabel('첫 번째 각 A').focus();

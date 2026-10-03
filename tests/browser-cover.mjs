@@ -29,10 +29,10 @@ async function checkAlignment(label){
   const relW=btn.width/frame.width*100, relH=btn.height/frame.height*100;
   const ratio=frame.width/frame.height;
   assert.ok(Math.abs(ratio-1672/941)<0.01,`${label}: cover-frame should keep the image's exact aspect ratio, got ${ratio}`);
-  assert.ok(Math.abs(relLeft-36.7)<0.3,`${label}: left% drifted (${relLeft})`);
-  assert.ok(Math.abs(relTop-60.9)<0.3,`${label}: top% drifted (${relTop})`);
-  assert.ok(Math.abs(relW-26.1)<0.3,`${label}: width% drifted (${relW})`);
-  assert.ok(Math.abs(relH-11.2)<0.3,`${label}: height% drifted (${relH})`);
+  assert.ok(Math.abs(relLeft-35.65)<0.3,`${label}: left% drifted (${relLeft})`);
+  assert.ok(Math.abs(relTop-56.75)<0.3,`${label}: top% drifted (${relTop})`);
+  assert.ok(Math.abs(relW-28.65)<0.3,`${label}: width% drifted (${relW})`);
+  assert.ok(Math.abs(relH-14.98)<0.3,`${label}: height% drifted (${relH})`);
 }
 await checkAlignment('1440x900');
 await page.setViewportSize({width:1920,height:1080});await page.waitForTimeout(150);await checkAlignment('1920x1080');

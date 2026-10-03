@@ -1,4 +1,4 @@
-import cover from '../assets/triangle-art-cover.webp';
+import cover from '../assets/triangle-art-cover-main.webp';
 // The cover image already contains the title, tagline, start-button graphic and credit line —
 // this component never redraws that text in HTML. `.cover-frame` is sized in CSS to exactly
 // match the image's own 1672x941 aspect ratio (letterboxed within the viewport), so the
